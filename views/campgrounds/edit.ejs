@@ -1,0 +1,132 @@
+<%- layout('layouts/boilerPlate') %>
+<div class="row">
+  <h1 class="text-center">Edit Campground</h1>
+  <div class="col-6 offset-3">
+    <form
+      action="/campgrounds/<%=campgrounds._id%>?_method=put"
+      method="post"
+      novalidate
+      class="validated-form"
+      enctype="multipart/form-data"
+    >
+      <div class="mb-3">
+        <label class="form-label" for="title">Title</label>
+        <input
+          class="form-control"
+          type="text"
+          name="campground[title]"
+          id="title"
+          placeholder="title"
+          value="<%=campgrounds.title%>"
+          required
+        />
+        <div class="valid-feedback">looks good</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="location">location</label>
+        <input
+          class="form-control"
+          type="text"
+          name="campground[location]"
+          id="location"
+          placeholder="location"
+          value="<%=campgrounds.location%>"
+          required
+        />
+        <div class="valid-feedback">looks good</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="price">Campground Price</label>
+        <div class="input-group">
+          <span class="input-group-text" id="price-label">$</span>
+          <input
+            type="number"
+            class="form-control"
+            id="price"
+            name="campground[price]"
+            placeholder="0.00$"
+            aria-label="price"
+            aria-describedby="price-label"
+            value="<%=campgrounds.price%>"
+            required
+          />
+          <div class="valid-feedback">looks good</div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="description">Description</label>
+        <textarea
+          class="form-control"
+          type="text"
+          name="campground[description]"
+          id="description"
+          required
+        >
+        <%=campgrounds.description%>
+        </textarea>
+        <div class="valid-feedback">looks good</div>
+      </div>
+
+      <div class="mb-3">
+        <input
+          class="form-control"
+          type="file"
+          id="image"
+          name="image"
+          multiple
+        />
+      </div>
+
+      <div class="mb-3">
+        <% campgrounds.images.forEach(function(img,i) { %>
+
+        <img src="<%= img.thumbnail%>" class="img-thumbnail" alt="" />
+        <div class="form-check-inline">
+          <input
+            type="checkbox"
+            id="image-<%=i%>"
+            name="deleteImages[]"
+            value="<%=img.filename%>"
+          />
+        </div>
+        <label for="image-<%=i%>">Delete</label>
+        <% }) %>
+      </div>
+
+      <div class="mb-3">
+        <button class="btn btn-info text-light">Update Campground</button>
+      </div>
+    </form>
+    <a class="mb-3" href="/campgrounds/<%= campgrounds._id %>"
+      >Back To Campgrounds</a
+    >
+  </div>
+</div>
+
+<script>
+  (() => {
+    "use strict";
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll(".validated-form");
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        "submit",
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+</script>
