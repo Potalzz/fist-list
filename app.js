@@ -1,9 +1,6 @@
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-console.log("git hub update!!");
-
-console.log(process.env.SECRET);
 
 const express = require("express");
 const path = require("path");
@@ -18,11 +15,11 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user");
 const helmet = require("helmet");
+const mongoSanitize = require("express-mongo-sanitize");
 
 const userRoutes = require("./routes/users");
 const campgroundRoutes = require("./routes/campgrounds");
 const reviewRoutes = require("./routes/reviews");
-const { name } = require("ejs");
 const dbUrl = process.env.DB_URL || "mongodb://127.0.0.1:27017/campground";
 // const dbUrl = "mongodb://127.0.0.1:27017/campground";
 mongoose
@@ -44,18 +41,25 @@ db.once("open", () => {
 const app = express();
 
 app.engine("ejs", ejsMate);
-app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  mongoSanitize({
+    replaceWith: "_",
+  })
+);
+
+const secret = process.env.SECRET || "thisshouldbeabettersecret!";
 
 const store = MongoStore.create({
   mongoUrl: dbUrl,
   touchAfter: 24 * 60 * 60,
   crypto: {
-    secret: "thisisshoulddbeatbettersecret!",
+    secret,
   },
 });
 
@@ -66,7 +70,7 @@ store.on("error", function (e) {
 const sessionConfig = {
   store,
   name: "session",
-  secret: "thisisshoulddbeatbettersecret!",
+  secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -153,4 +157,9 @@ app.use((err, req, res, next) => {
 
 app.listen(3000, () => {
   console.log("ON PORT 3000!");
+});
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Serving on port ${port}`);
 });
