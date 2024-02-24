@@ -23,8 +23,8 @@ const userRoutes = require("./routes/users");
 const campgroundRoutes = require("./routes/campgrounds");
 const reviewRoutes = require("./routes/reviews");
 const { name } = require("ejs");
-// const dbUrl = process.env.DB_URL;
-const dbUrl = "mongodb://127.0.0.1:27017/campground";
+const dbUrl = process.env.DB_URL;
+// const dbUrl = "mongodb://127.0.0.1:27017/campground";
 mongoose
   .connect(dbUrl)
   .then(() => {
